@@ -19,7 +19,7 @@ class FileNotAcceptedTypeException(Exception):
 
 # TODO: give this class necessary init code to get mutagen objects for any accepted filetype
 # TODO: give this class methods for finding metadata tags from any arbitrary filetype (worth having subclasses for each type?)
-class Music:
+class MP3:
     def __init__(self, filepath):
         self.path = filepath
         self.audio = mutagen.easyid3.EasyID3(filepath)
@@ -44,19 +44,20 @@ class MusicCollection:
     def __init__(self):
         self.collection = []
     def add_music(self, filename):
-        self.collection.append(Music(filename))
+        ext = filename.split('.')[-1]
+        self.collection.append(file_extensions_accepted[ext](filename))
     def pop_music(self):
         self.collection.pop()
 
 
 music_collection = MusicCollection()
-file_extensions_accepted = ['mp3']
+file_extensions_accepted = {'mp3': MP3}
 
 
 def get_music_to_sort(path='./'):
     for root, dirnames, filenames in os.walk(path):
         print root, dirnames, filenames
-        for filetype in file_extensions_accepted:
+        for filetype in file_extensions_accepted.keys():
             for filename in fnmatch.filter(filenames, "*."+filetype):
                 print os.path.join(root, filename)
                 music_collection.add_music(os.path.join(root, filename))
