@@ -137,7 +137,7 @@ def get_music_to_sort(path='./'):
             for filename in fnmatch.filter(filenames, "*."+filetype):
                 music_collection.add_music(os.path.join(root, filename))
 
-def sort_music(format="artist/album/title", path='./'):
+def sort_music(format, path='./'):
     path_generator = PathGenerator(format)
     if path[-1] is not "/": path += "/"
     for track in music_collection.collection:
@@ -168,6 +168,10 @@ if __name__ == "__main__":
                          "\ttrack\n"+ \
                          "\ttitle\n")
     args = parser.parse_args()
+    if args.format is None:
+        format = "artist/album/title"
+    else:
+        format = args.format
     get_music_to_sort()
-    sort_music()
+    sort_music(format)
 
