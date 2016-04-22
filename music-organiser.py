@@ -103,7 +103,7 @@ def sort_music(path='./'):
             print "Couldn't move track at " + track.path + "!"
 
 
-if __name__ == "__main___":
+if __name__ == "__main__":
     get_music_to_sort()
     sort_music()
 
