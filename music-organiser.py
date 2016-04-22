@@ -5,10 +5,11 @@ import os
 import mutagen
 import mutagen.flac
 import mutagen.easyid3
-
-# TODO: Accept layout structure as parameter
+import time
 # TODO: Accept path to sort as parameter
 # TODO: Accept path for music to be sorted into as parameter
+# TODO: Add layout structure with support for concatenating tags
+#           This can be done with a + in the structure, then when parsing split on '+' and build the string
 
 
 # NOTE: Audio classes must have get_artist, get_track, get_title, get_album and get_genre! No exceptions!
@@ -22,12 +23,17 @@ class PathGenerator:
 
     def generate_path(self, audio):
         generated_path = ""
-        for tag in self.tags[:-1]:
-            try:
-                generated_path += getattr(audio,"get_"+tag)() + "/"
-            except AttributeError, NoTagFoundException:
-                raise NoTagFoundException
-        generated_path += getattr(audio, "get_" + self.tags[-1])() + "." + audio.get_type()
+        for tag_unseperated in self.tags[:-1]:
+            for tag in tag_unseperated.split('+'):
+                try:
+                    generated_path += getattr(audio,"get_"+tag)() + " - "
+                except AttributeError, NoTagFoundException:
+                    raise NoTagFoundException
+            # Remove final " - "
+            generated_path = generated_path[:-3] + '/'
+        for tag in self.tags[-1].split('+'):
+            generated_path += getattr(audio, "get_" + self.tags[-1])()  + ' - '
+        generated_path = generated_path[:-3] + "." + audio.get_type()
         return generated_path
 
 
@@ -81,7 +87,6 @@ class AbstractID3Parser:
         self.audio = mutagen.File(filepath)  # What if we fail? Should raise an exception.
 
     def get_artist(self):
-        print self.audio.tags
         return self.audio['TPE2'][0].decode()
 
     def get_album(self):
@@ -90,9 +95,11 @@ class AbstractID3Parser:
     def get_title(self):
         return self.audio['TIT2'][0].decode()
 
-    # Genre?
+    def get_track(self):
+        return self.audio['TRCK'][0].decode()
 
-    # Track?
+    def get_genre(self):
+        return self.audio['TCON'][0].decode()
 
     def get_type(self):
         return self.path.split(".")[-1]
