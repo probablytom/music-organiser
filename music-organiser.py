@@ -1,16 +1,14 @@
 import fnmatch
-import mutagen.easyid3
+import argparse
 import shutil
 import os
+import mutagen.flac
+import mutagen.easyid3
 
 # TODO: Accept layout structure as parameter
 # TODO: Accept path to sort as parameter
 # TODO: Accept path for music to be sorted into as parameter
-
-
-
-
-# TODO: Complete this!
+# TODO: Set up argparse
 
 
 class FileNotAcceptedTypeException(Exception):
@@ -22,22 +20,49 @@ class FileNotAcceptedTypeException(Exception):
 class MP3:
     def __init__(self, filepath):
         self.path = filepath
-        self.audio = mutagen.easyid3.EasyID3(filepath)
+        self.audio = mutagen.easyid3.EasyID3(filepath)  # What if we fail? Should raise an exception.
 
     def get_artist(self):
-        if self.audio is None: return None
         return self.audio['artist'][0].decode()
 
     def get_album(self):
-        if self.audio is None: return None
         return self.audio['album'][0].decode()
 
     def get_title(self):
-        if self.audio is None: return None
         return self.audio['title'][0].decode()
 
     def get_type(self):
         return self.path.split(".")[-1]
+
+class Flac:
+    def __init__(self, filepath):
+        self.path = filepath
+        self.audio = mutagen.flac.FLAC(filepath)
+
+
+    def get_artist(self):
+        return self.audio.tags["artist"]
+
+
+    def get_genre(self):
+        return self.audio.tags["genre"]
+
+
+    def get_track(self):
+        return self.audio.tags["tracknumber"]
+
+
+    def get_album(self):
+        return self.audio.tags["album"]
+
+
+    def get_title(self):
+        return self.audio.tags["title"]
+
+
+    def get_type(self):
+        return self.path.split(".")[-1]
+
 
 
 class MusicCollection:
@@ -51,7 +76,9 @@ class MusicCollection:
 
 
 music_collection = MusicCollection()
-file_extensions_accepted = {'mp3': MP3}
+file_extensions_accepted = {'mp3': MP3,
+                            'flac': Flac}
+
 
 
 def get_music_to_sort(path='./'):
@@ -76,7 +103,7 @@ def sort_music(path='./'):
             print "Couldn't move track at " + track.path + "!"
 
 
-if __name__ == "__main__":
+if __name__ == "__main___":
     get_music_to_sort()
     sort_music()
 
