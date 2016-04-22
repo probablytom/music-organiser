@@ -32,7 +32,7 @@ class PathGenerator:
             # Remove final " - "
             generated_path = generated_path[:-3] + '/'
         for tag in self.tags[-1].split('+'):
-            generated_path += getattr(audio, "get_" + self.tags[-1])()  + ' - '
+            generated_path += getattr(audio, "get_" + tag)()  + ' - '
         generated_path = generated_path[:-3] + "." + audio.get_type()
         return generated_path
 
@@ -85,6 +85,7 @@ class AbstractID3Parser:
     def __init__(self, filepath):
         self.path = filepath
         self.audio = mutagen.File(filepath)  # What if we fail? Should raise an exception.
+        print self.audio.keys(), self.audio.values()
 
     def get_artist(self):
         return self.audio['TPE2'][0].decode()
@@ -96,7 +97,10 @@ class AbstractID3Parser:
         return self.audio['TIT2'][0].decode()
 
     def get_track(self):
-        return self.audio['TRCK'][0].decode()
+        if 'TRCK' in self.audio.keys():
+            return self.audio['TRCK'][0].decode()
+        else:
+            return self.audio[u'TXXX:track'][0].decode()
 
     def get_genre(self):
         return self.audio['TCON'][0].decode()
