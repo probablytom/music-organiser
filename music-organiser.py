@@ -41,23 +41,23 @@ class Flac:
 
 
     def get_artist(self):
-        return self.audio.tags["artist"]
+        return self.audio.tags["artist"][0].decode()
 
 
     def get_genre(self):
-        return self.audio.tags["genre"]
+        return self.audio.tags["genre"][0].decode()
 
 
     def get_track(self):
-        return self.audio.tags["tracknumber"]
+        return self.audio.tags["tracknumber"][0].decode()
 
 
     def get_album(self):
-        return self.audio.tags["album"]
+        return self.audio.tags["album"][0].decode()
 
 
     def get_title(self):
-        return self.audio.tags["title"]
+        return self.audio.tags["title"][0].decode()
 
 
     def get_type(self):
@@ -91,8 +91,8 @@ def get_music_to_sort(path='./'):
 
 def sort_music(path='./'):
     for track in music_collection.collection:
+        print track.get_artist(), track.get_album(), track.get_title(), track.get_type()
         new_filepath = path + track.get_artist() + "/" + track.get_album() + "/" + track.get_title() + "." + track.get_type()
-        print new_filepath
         if not os.path.exists(os.path.dirname(new_filepath)):
             os.makedirs(os.path.dirname(new_filepath))
             print "Made path!"
