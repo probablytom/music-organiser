@@ -15,6 +15,45 @@ class FileNotAcceptedTypeException(Exception):
     pass
 
 
+class NoAudioObjectException(Exception):
+    pass
+
+
+class AbstractOggVorbCommentParser:
+    def __init__(self, filepath):
+        self.path = filepath
+        self.audio = None
+
+
+    def get_artist(self):
+        if self.audio is None: raise NoAudioObjectException
+        else: return self.audio.tags["artist"][0].decode()
+
+
+    def get_genre(self):
+        if self.audio is None: return None
+        return self.audio.tags["genre"][0].decode()
+
+
+    def get_track(self):
+        if self.audio is None: return None
+        return self.audio.tags["tracknumber"][0].decode()
+
+
+    def get_album(self):
+        if self.audio is None: return None
+        return self.audio.tags["album"][0].decode()
+
+
+    def get_title(self):
+        if self.audio is None: return None
+        return self.audio.tags["title"][0].decode()
+
+
+    def get_type(self):
+        return self.path.split(".")[-1]
+
+
 # TODO: give this class necessary init code to get mutagen objects for any accepted filetype
 # TODO: give this class methods for finding metadata tags from any arbitrary filetype (worth having subclasses for each type?)
 class MP3:
@@ -34,35 +73,11 @@ class MP3:
     def get_type(self):
         return self.path.split(".")[-1]
 
-class Flac:
+
+class Flac(AbstractOggVorbCommentParser):
     def __init__(self, filepath):
-        self.path = filepath
+        super(Flac, self).__init__(filepath)  # What if we fail? Should raise an exception.
         self.audio = mutagen.flac.FLAC(filepath)
-
-
-    def get_artist(self):
-        return self.audio.tags["artist"][0].decode()
-
-
-    def get_genre(self):
-        return self.audio.tags["genre"][0].decode()
-
-
-    def get_track(self):
-        return self.audio.tags["tracknumber"][0].decode()
-
-
-    def get_album(self):
-        return self.audio.tags["album"][0].decode()
-
-
-    def get_title(self):
-        return self.audio.tags["title"][0].decode()
-
-
-    def get_type(self):
-        return self.path.split(".")[-1]
-
 
 
 class MusicCollection:
