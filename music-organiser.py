@@ -167,13 +167,15 @@ if __name__ == "__main__":
     parser.add_argument('--structure', type=str, dest="format",
                     help="The filesystem structure desired.\n"+ \
                          "The structure should be a string, with slashes separating the folders. The last tag will be the filename.\n"+ \
-                         "For the default, then, the format is:\n\tartist/album/track\n"
+                         "For the default, then, the format is:\n\tartist/album/title\n"
                          "Supported tags:"+ \
                          "\tartist\n"+ \
                          "\talbum\n"+ \
                          "\tgenre\n"+ \
                          "\ttrack\n"+ \
-                         "\ttitle\n")
+                         "\ttitle\n"+ \
+                         "For combining two tags on the same level, use a +, without spaces.\nSo, the default structure with the track number before the track title would be:\n"+ \
+                         "\tartist/album/track+title")
     args = parser.parse_args()
     if args.format is None:
         format = "artist/album/title"
