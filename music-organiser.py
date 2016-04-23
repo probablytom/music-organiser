@@ -6,10 +6,6 @@ import mutagen
 import mutagen.flac
 import mutagen.easyid3
 import time
-# TODO: Accept path to sort as parameter
-# TODO: Accept path for music to be sorted into as parameter
-# TODO: Add layout structure with support for concatenating tags
-#           This can be done with a + in the structure, then when parsing split on '+' and build the string
 
 
 # NOTE: Audio classes must have get_artist, get_track, get_title, get_album and get_genre! No exceptions!
