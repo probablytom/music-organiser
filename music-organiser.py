@@ -10,7 +10,10 @@ import time
 # TODO: Accept path for music to be sorted into as parameter
 # TODO: Add layout structure with support for concatenating tags
 #           This can be done with a + in the structure, then when parsing split on '+' and build the string
-
+# support wav, alac?, m4a, 
+# Transcoding? 
+# seperate albums by filetype?
+# Research aac
 
 # NOTE: Audio classes must have get_artist, get_track, get_title, get_album and get_genre! No exceptions!
 
