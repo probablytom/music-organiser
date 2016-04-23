@@ -81,6 +81,7 @@ class AbstractOggVorbCommentParser:
         return self.path.split(".")[-1]
 
 # What should happen if a key isn't filled in?
+# USEFUL: http://id3lib.sourceforge.net/id3/id3v2.3.0.html
 class AbstractID3Parser:
     def __init__(self, filepath):
         self.path = filepath
@@ -163,28 +164,33 @@ def sort_music(format, path='./'):
 
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser(
         description='''Organizes a music collection using tag information.
     Directory structure defaults to artist/album/track, but can be extended via parameters.''',
         formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument('--structure', type=str, dest="format",
-                    help="The filesystem structure desired.\n"+ \
-                         "The structure should be a string, with slashes separating the folders. The last tag will be the filename.\n"+ \
-                         "For the default, then, the format is:\n\tartist/album/title\n"
-                         "Supported tags:"+ \
-                         "\tartist\n"+ \
-                         "\talbum\n"+ \
-                         "\tgenre\n"+ \
-                         "\ttrack\n"+ \
-                         "\ttitle\n"+ \
-                         "For combining two tags on the same level, use a +, without spaces.\nSo, the default structure with the track number before the track title would be:\n"+ \
-                         "\tartist/album/track+title")
+    parser.add_argument('--structure', type=str, dest="format", default='artist/album/title',
+                   help="The filesystem structure desired.\n"+ \
+                        "The structure should be a string, with slashes separating the folders. The last tag will be the filename.\n"+ \
+                        "For the default, then, the format is:\n\tartist/album/title\n"
+                        "Supported tags:"+ \
+                        "\tartist\n"+ \
+                        "\talbum\n"+ \
+                        "\tgenre\n"+ \
+                        "\ttrack\n"+ \
+                        "\ttitle\n"+ \
+                        "For combining two tags on the same level, use a +, without spaces.\nSo, the default structure with the track number before the track title would be:\n"+ \
+                        "\tartist/album/track+title")
+    parser.add_argument('--source', type=str, dest="source", default="./",
+                   help="The directory containing source music files to be sorted. This path must exist. "
+                        "The existance of this path is not currently checked.\nDefault current path.")
+    parser.add_argument('--destination', type=str, dest="destination", default="./",
+                   help="The directory where sorted music and the folders that sorted music will reside in is."
+                        " This is the root of the new music filesystem. This path must exist. "
+                        "The existance of this path is not currently checked.\nDefault current path.")
+
     args = parser.parse_args()
-    if args.format is None:
-        format = "artist/album/title"
-    else:
-        format = args.format
-    get_music_to_sort()
-    sort_music(format)
+    get_music_to_sort(args.source)
+    sort_music(args.format, args.destination)
 
